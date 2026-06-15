@@ -260,6 +260,42 @@ html, body {
 #audio-toggle[data-muted="true"] .audio-icon-on { display: none; }
 #audio-toggle[data-muted="false"] .audio-icon-off { display: none; }
 
+#camera-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(27, 42, 74, 0.78);
+  border: 1px solid var(--color-songket-gold);
+  color: var(--color-songket-gold);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all 120ms ease;
+  touch-action: manipulation;
+  padding: 0;
+  position: relative;
+}
+
+#camera-toggle:hover {
+  background: rgba(212, 168, 67, 0.15);
+  transform: scale(1.05);
+}
+
+#camera-toggle[data-mode="isometric"] .cam-icon-orbit,
+#camera-toggle[data-mode="isometric"] .cam-icon-follow { display: none; }
+
+#camera-toggle[data-mode="free-orbit"] .cam-icon-iso,
+#camera-toggle[data-mode="free-orbit"] .cam-icon-follow { display: none; }
+
+#camera-toggle[data-mode="follow"] .cam-icon-iso,
+#camera-toggle[data-mode="follow"] .cam-icon-orbit { display: none; }
+
+#camera-toggle[data-mode="win-sweep"] {
+  display: none;
+}
+
 #dice-tray {
   display: flex;
   align-items: center;

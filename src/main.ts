@@ -88,6 +88,39 @@ function main(): void {
     });
   }
 
+  // Camera mode toggle. Three user-selectable modes; the win-sweep mode
+  // is internal (driven by game-over event) and the button hides itself then.
+  type UserCamMode = 'isometric' | 'free-orbit' | 'follow';
+  const cameraToggle = document.getElementById('camera-toggle') as HTMLButtonElement | null;
+  const CYCLE: UserCamMode[] = ['isometric', 'free-orbit', 'follow'];
+  const setCamMode = (mode: UserCamMode): void => {
+    sceneRoot.cameraController.setMode(mode);
+    if (cameraToggle) cameraToggle.dataset['mode'] = mode;
+  };
+  if (cameraToggle) {
+    cameraToggle.dataset['mode'] = 'isometric';
+    cameraToggle.addEventListener('click', () => {
+      const current = (cameraToggle.dataset['mode'] as UserCamMode) ?? 'isometric';
+      const idx = CYCLE.indexOf(current);
+      const next = CYCLE[(idx + 1) % CYCLE.length]!;
+      setCamMode(next);
+    });
+  }
+  // Attach pointer/touch/wheel input to the canvas for free-orbit
+  sceneRoot.cameraController.attachInput(sceneRoot.renderer.domElement);
+  // When the game ends, the button hides (win-sweep) — restore it on
+  // a fresh match.
+  game.bus.on('match-started', () => {
+    if (cameraToggle) {
+      cameraToggle.style.display = '';
+      cameraToggle.dataset['mode'] = 'isometric';
+      sceneRoot.cameraController.setMode('isometric');
+    }
+  });
+  game.bus.on('game-over', () => {
+    if (cameraToggle) cameraToggle.style.display = 'none';
+  });
+
   // Wire SFX to game events. The audio context is created on the first
   // user gesture (the dice click or audio toggle click).
   game.bus.on('dice-rolled', () => audio.play('dice-rolled'));

@@ -55,7 +55,9 @@ npm run test:watch # vitest, watch mode
 |---|---|---|
 | Roll dice | Click **Roll** | `Space` / `Enter` |
 | Lock a die | Click the die | (no shortcut yet) |
-| Switch camera | Drag with the mouse | (no shortcut yet) |
+| Switch camera mode | Click the **camera** button (cycles isometric → free-orbit → follow) | (no shortcut yet) |
+| Rotate camera (free-orbit) | Drag with the mouse / one-finger drag | (no shortcut yet) |
+| Zoom camera (free-orbit) | Mouse wheel / two-finger pinch | (no shortcut yet) |
 | Mute / unmute | Click the speaker icon | (no shortcut yet) |
 | Open menu | Refresh the page | `F5` |
 
@@ -75,11 +77,12 @@ npm run test:watch # vitest, watch mode
   Istana Maimun, Benteng Rotterdam, Monas, Candi Sewu, Taman Nasional Komodo)
 - 5 procedural batik tile patterns (parang, ulos, kawung, poleng, ukir)
 - Stylized 2.5D Indonesia archipelago base under the tiles
-- 5-pion batik costume picker (parang/ulos/kawung/poleng/ukir, 2-3 color
-  variants per pattern)
+- Player costume picker (5 batik patterns, 2-3 color
+   variants per pattern) — bots keep their assigned costumes
 - Snake tubes route around the dice (keep-out zone with 2-stage geometry fix)
 - Dice lifted above snake arc peak with parabolic bounce physics
-- Camera modes: isometric, follow-pion, win-sweep orbital
+- Camera modes: isometric, follow-pion, win-sweep orbital, **free-orbit**
+  (drag to rotate, wheel/pinch to zoom)
 
 ### Audio (procedural, no audio files)
 - 5 sound effects synthesized with Web Audio API
