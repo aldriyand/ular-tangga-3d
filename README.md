@@ -4,7 +4,7 @@ A 3D snakes-and-ladders game themed around the Indonesian archipelago.
 
 Built with **Three.js + Vite + TypeScript**. All art is procedurally generated — no
 external models, no audio files, no asset pipeline. The whole project ships as
-~63 KB of game code plus the Three.js runtime.
+~73 KB of game code plus the Three.js runtime.
 
 ```
 npm install
@@ -116,7 +116,7 @@ src/
     Dice.ts                    # 2d6 with set-aside, bounce animation
     Pion.ts                    # Player piece, costume texture swap
     Snake.ts                   # Procedural snake geometry, 9 styles
-    Ladder.ts                  # Procedural monument geometry, 7 buildings
+    Ladder.ts                  # Procedural monument + from/to legibility cues
   data/                        # Static game data
     board.ts                   # Snakes, ladders, regions, isSquareType()
     path.ts                    # square → world position mapping
@@ -124,19 +124,25 @@ src/
     Game.ts                    # Orchestrator, FSM, animation dispatch
     GameState.ts               # State enum + allowed-transitions table
     EventBus.ts                # Typed pub/sub
-    Bot.ts                     # Easy/Medium/Hard AI
     Rng.ts                     # Mulberry32 + crypto-fallback
     SaveLoad.ts                # localStorage schema v1
     RngSerializer.ts           # RNG rehydration for resume
     Trivia.ts                  # 18 questions across 7 monuments
+  ai/                          # Bot AI
+    Bot.ts                     # Easy/Medium/Hard strategy
+  i18n/                        # Tiny English/Indonesian translation layer
+    i18n.ts                    # t() function with EN/ID dictionaries
   scene/                       # Three.js scene construction
     SceneRoot.ts               # Camera, lights, rAF loop, updater list
     Geometry.ts                # Board, tiles, snakes, ladders, labels
     Archipelago.ts             # 5 stylized islands + ocean
     BatikTextures.ts           # 5 procedural batik patterns + costumes
-    CameraController.ts        # 3 camera modes, smooth transitions
+    CameraController.ts        # 4 camera modes (incl. free-orbit)
   ui/                          # HTML overlay controller
     Ui.ts                      # Reads EventBus, updates DOM modals
+  utils/                       # Tiny math + animation helpers
+    math.ts                    # clamp, TAU, easeInOutCubic, lerp
+    animation.ts               # makeTween for per-frame updaters
 ```
 
 ### Event-driven
@@ -150,7 +156,7 @@ listeners (e.g. analytics) without touching game code.
 
 - **No licensing**. Every sound, every texture, every model is generated at
   runtime. Nothing to attribute.
-- **Tiny bundle**. The whole game code is ~63 KB. The Three.js runtime is the
+- **Tiny bundle**. The whole game code is ~73 KB. The Three.js runtime is the
   bulk of the download.
 - **Offline-ready**. Nothing fetches anything once the page is loaded.
 - **Tunable**. Want a different batik palette? Change three numbers in
@@ -203,7 +209,7 @@ removed.
   harness (Vitest).
 - **Slice 8**: Free-orbit camera mode (drag to rotate, wheel/pinch
   to zoom) with spherical-coord state machine.
-- **Slice 9 (this slice)**: Ladder from/to legibility cues. Each
+- **Slice 9**: Ladder from/to legibility cues. Each
   ladder now has a glowing gold ring on the from square and on the to
   square, a thin gold guide line that visibly traces the climb
   direction, and a small up-arrow at the top — so players can read
@@ -221,7 +227,6 @@ removed.
 - **Snake trivia**: a "what does this creature symbolize?" question on
   snake landings (currently only ladders get questions)
 - **More monuments**: more Indonesian cultural sites, more trivia
-- **Camera orbit / pan**: free-form camera control for exploring the scene
 - **Online multiplayer**: 2+ players over WebSocket
 
 ## Attributions
