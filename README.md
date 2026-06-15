@@ -245,5 +245,4 @@ error.
 
 ## License
 
-MIT. See `LICENSE` for the full text. (TBD — add this file if you want to
-publish.)
+MIT. See `LICENSE` for the full text.
