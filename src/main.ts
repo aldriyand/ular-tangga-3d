@@ -16,6 +16,10 @@ import { UiController, type PlayerSlotInfo } from './ui/Ui';
 import { squareToWorld } from './data/path';
 import { getPionCostume, type PionCostumeSpec } from './scene/BatikTextures';
 import { AudioEngine } from './audio/AudioEngine';
+import { initLang } from './i18n/i18n';
+
+// Load language preference before any UI is constructed
+initLang();
 
 const PLAYER_SPECS: ReadonlyArray<PlayerSlotInfo> = [
   { index: 0, name: 'Player',      isHuman: true,  isBot: false },

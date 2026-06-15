@@ -9,6 +9,7 @@ import { saveExists } from '../game/SaveLoad';
 import { makeBatikDataUrl } from '../scene/BatikTextures';
 import type { TriviaQuestion } from '../game/Trivia';
 import { getTrivia } from '../game/Trivia';
+import { t, setLang, getLang, onLangChange, type Lang } from '../i18n/i18n';
 
 export interface PlayerSlotInfo {
   index: number;
@@ -43,6 +44,7 @@ export class UiController {
   private menuResumeBtn: HTMLButtonElement;
   private diffButtons: HTMLButtonElement[] = [];
   private costumeButtons: HTMLButtonElement[] = [];
+  private langButtons: HTMLButtonElement[] = [];
   private playerSlots: Map<number, { nameEl: HTMLElement; squareEl: HTMLElement; slotEl: HTMLElement }> = new Map();
   private currentToastTimeout: number | null = null;
   private onDiceClickHandler: (() => void) | null = null;
@@ -51,6 +53,7 @@ export class UiController {
   private onResume: (() => void) | null = null;
   private selectedDifficulty: 'easy' | 'medium' | 'hard' = 'medium';
   private selectedCostume: string = 'parang';
+  private selectedLang: Lang = 'en';
 
   constructor(bus: EventBus) {
     this.bus = bus;
@@ -111,6 +114,33 @@ export class UiController {
         }
       });
     }
+
+    // Language picker buttons
+    this.langButtons = Array.from(this.menuModalEl.querySelectorAll<HTMLButtonElement>('.lang-btn'));
+    for (const btn of this.langButtons) {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset['lang'] as Lang;
+        this.selectedLang = lang;
+        setLang(lang);
+        for (const b of this.langButtons) {
+          const isThis = b === btn;
+          b.classList.toggle('selected', isThis);
+          b.setAttribute('aria-checked', isThis ? 'true' : 'false');
+        }
+      });
+    }
+    // Sync initial selection with the active language
+    this.selectedLang = getLang();
+    for (const b of this.langButtons) {
+      const isThis = b.dataset['lang'] === this.selectedLang;
+      b.classList.toggle('selected', isThis);
+      b.setAttribute('aria-checked', isThis ? 'true' : 'false');
+    }
+
+    // Apply translations to all data-i18n elements (and data-i18n-html)
+    this.applyTranslations();
+    // Re-apply on language change
+    onLangChange(() => this.applyTranslations());
 
     // Wire UI → bus
     this.diceButton.addEventListener('click', () => {
@@ -343,6 +373,26 @@ export class UiController {
   hideTrivia(): void {
     this.triviaModalEl.classList.add('hidden');
     this.bus.emit({ type: 'trivia-hide' });
+  }
+
+  /**
+   * Apply the current language to all data-i18n / data-i18n-html
+   * elements in the document. Called on init and on every lang change.
+   *
+   * data-i18n="key"          → element.textContent = t(key)
+   * data-i18n-html="key"     → element.innerHTML   = t(key)  (allows markup)
+   * data-i18n-aria="key"     → element.setAttribute('aria-label', t(key))
+   */
+  private applyTranslations(): void {
+    const all = document.querySelectorAll<HTMLElement>('[data-i18n], [data-i18n-html], [data-i18n-aria]');
+    all.forEach((el) => {
+      const txtKey = el.dataset['i18n'];
+      if (txtKey) el.textContent = t(txtKey);
+      const htmlKey = el.dataset['i18nHtml'];
+      if (htmlKey) el.innerHTML = t(htmlKey);
+      const ariaKey = el.dataset['i18nAria'];
+      if (ariaKey) el.setAttribute('aria-label', t(ariaKey));
+    });
   }
 
   private handleTriviaAnswer(clicked: HTMLButtonElement, idx: number, question: TriviaQuestion): void {
