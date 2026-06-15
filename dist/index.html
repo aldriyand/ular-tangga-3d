@@ -11,9 +11,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Ular Tangga Nusantara</title>
-    <script type="module" crossorigin src="./assets/index-DXhS3WNU.js"></script>
+    <script type="module" crossorigin src="./assets/index-aEKtfmWY.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/three-DRtxGVMa.js">
-    <link rel="stylesheet" crossorigin href="./assets/index-CmgX88it.css">
+    <link rel="stylesheet" crossorigin href="./assets/index-Bg43un6x.css">
   </head>
   <body>
     <div id="app">
@@ -79,20 +79,20 @@
         <div id="toast" role="status" aria-live="polite"></div>
       </div>
 
-      <!-- Main menu (start, resume, choose difficulty, pick costume) -->
+      <!-- Main menu (start, resume, choose difficulty, pick costume, language) -->
       <div id="menu-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="menu-title">
         <div class="menu-card">
-          <h2 id="menu-title">Ular Tangga Nusantara</h2>
-          <p class="menu-subtitle">Snakes &amp; Ladders of the Archipelago</p>
+          <h2 id="menu-title" data-i18n="menu.title">Ular Tangga Nusantara</h2>
+          <p class="menu-subtitle" data-i18n="menu.subtitle">Snakes &amp; Ladders of the Archipelago</p>
 
           <div class="difficulty-picker" role="radiogroup" aria-label="Bot difficulty">
-            <button class="diff-btn selected" data-diff="medium" type="button" role="radio" aria-checked="true">Medium</button>
-            <button class="diff-btn" data-diff="easy" type="button" role="radio" aria-checked="false">Easy</button>
-            <button class="diff-btn" data-diff="hard" type="button" role="radio" aria-checked="false">Hard</button>
+            <button class="diff-btn selected" data-diff="medium" type="button" role="radio" aria-checked="true" data-i18n="menu.diff.medium">Medium</button>
+            <button class="diff-btn" data-diff="easy" type="button" role="radio" aria-checked="false" data-i18n="menu.diff.easy">Easy</button>
+            <button class="diff-btn" data-diff="hard" type="button" role="radio" aria-checked="false" data-i18n="menu.diff.hard">Hard</button>
           </div>
 
           <div class="costume-section">
-            <h3 class="costume-label">Choose your costume</h3>
+            <h3 class="costume-label" data-i18n="menu.costume">Choose your costume</h3>
             <div class="costume-picker" role="radiogroup" aria-label="Your batik costume">
               <button class="costume-btn selected" data-costume="parang" type="button" role="radio" aria-checked="true" title="Parang — Javanese broken-blade stripes">
                 <span class="costume-swatch" data-pattern="parang" style="--bg:#D4A843;--fg:#1B2A4A;--accent:#C41E3A"></span>
@@ -122,10 +122,18 @@
             </div>
           </div>
 
-          <button id="menu-resume" class="menu-btn primary hidden" type="button">Resume match</button>
-          <button id="menu-start" class="menu-btn primary" type="button">New match</button>
+          <div class="lang-section">
+            <span class="lang-label" data-i18n="menu.language">Language</span>
+            <div class="lang-picker" role="radiogroup" aria-label="Language">
+              <button class="lang-btn selected" data-lang="en" type="button" role="radio" aria-checked="true">EN</button>
+              <button class="lang-btn" data-lang="id" type="button" role="radio" aria-checked="false">ID</button>
+            </div>
+          </div>
 
-          <p class="menu-help">
+          <button id="menu-resume" class="menu-btn primary hidden" type="button" data-i18n="menu.resume">Resume match</button>
+          <button id="menu-start" class="menu-btn primary" type="button" data-i18n="menu.new">New match</button>
+
+          <p class="menu-help" data-i18n-html="menu.help">
             Roll the dice. Land on a <b>ladder</b> to climb. Land on a <b>snake</b> to slide.
             You can <b>lock a die</b> and re-roll the other. Reach square 100 exactly to win.
           </p>
@@ -136,9 +144,9 @@
       <div id="win-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="win-title">
         <div class="win-card">
           <div class="win-batik" aria-hidden="true"></div>
-          <h2 id="win-title">Menang!</h2>
+          <h2 id="win-title" data-i18n="win.title">You win!</h2>
           <p id="win-message">Player wins!</p>
-          <button id="win-restart" class="menu-btn primary" type="button">Play Again</button>
+          <button id="win-restart" class="menu-btn primary" type="button" data-i18n="win.restart">Play Again</button>
         </div>
       </div>
 

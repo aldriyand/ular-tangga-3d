@@ -2,7 +2,7 @@
  * Tests for the i18n module: t(), setLang(), and fallback behavior.
  */
 import { describe, it, expect, beforeEach } from 'vitest';
-import { t, setLang, getLang, initLang, type Lang } from './i18n';
+import { t, setLang, getLang, initLang } from './i18n';
 
 describe('i18n', () => {
   beforeEach(() => {
@@ -42,9 +42,12 @@ describe('i18n', () => {
   });
 
   it('returns a placeholder for missing keys', () => {
-    // @ts-expect-error — testing the missing-key fallback
-    const result = t('this.key.does.not.exist');
+    // Bypass TypeScript's key-existence check with `any`
+    const key = 'this.key.does.not.exist' as any;
+    const result = t(key);
+    // Missing keys return "??" followed by the key (see i18n.ts)
     expect(result).toContain('??');
+    expect(result).toContain('this.key.does.not.exist');
   });
 
   it('substitutes variables in translated strings', () => {

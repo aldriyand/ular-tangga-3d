@@ -44,7 +44,11 @@ describe('Trivia', () => {
   });
 
   it('getTriviaForLadder works with a Ladder data shape', () => {
-    const fakeLadder = { from: 4, to: 45, name: 'Candi Borobudur', region: 'java' as const };
+    // Ladder has fields: from, to, name, region, location (string)
+    const fakeLadder = {
+      from: 4, to: 45, name: 'Candi Borobudur',
+      region: 'java' as const, location: 'Central Java'
+    };
     const q = getTriviaForLadder(fakeLadder);
     expect(q).not.toBeNull();
   });
