@@ -15,6 +15,17 @@
  * All monuments are built around a unit "monument anchor" placed at the
  * midpoint between the from and to squares, scaled by the length of the
  * climb so longer ladders have taller monuments.
+ *
+ * Slice 9 (UX): from/to legibility cues. The 3D monuments are pretty but
+ * it's hard to tell at a glance which "from" square feeds which "to"
+ * square. We add three extras to every ladder:
+ *   1. A glowing gold "from" ring on the floor at the bottom square
+ *   2. A glowing gold "to" ring on the floor at the top square
+ *   3. A thin gold guide line that follows the climb path (floor + up
+ *      through the monument) so the eye can trace the route
+ *   4. A small floating "↑" arrow at the top ring, reinforcing "up"
+ * The color matches the existing songket gold used in the UI so it
+ * reads as a "go" affordance, not a decoration.
  */
 import * as THREE from 'three';
 import type { Ladder as LadderData } from '../data/board';
@@ -91,6 +102,111 @@ export class Ladder {
       mid.clone().sub(midOffset).add(new THREE.Vector3(0, length * 0.5, 0)),
       topAnchor
     ], false, 'catmullrom', 0.5);
+
+    // Slice 9 UX: from/to legibility cues. See file header.
+    this.buildLegibilityCues(start, end, length);
+  }
+
+  /**
+   * Build the from/to visual cues:
+   *   - Glowing gold ring on the floor at the bottom square (the "from")
+   *   - Glowing gold ring on the floor at the top square (the "to")
+   *   - A thin gold guide line that follows the climb path
+   *   - A small floating "↑" arrow at the top ring
+   *
+   * The gold color matches the songket UI gold so the rings read as
+   * "go this way" affordances, not decoration.
+   */
+  private buildLegibilityCues(start: THREE.Vector3, end: THREE.Vector3, length: number): void {
+    // Slight offset away from the monument so the ring isn't fully
+    // occluded by the base. The monument is at the midpoint, facing
+    // perpendicular to the climb direction. Push the ring a little
+    // toward the corresponding tile so it sits clearly over that tile.
+    const facing = new THREE.Vector3().subVectors(end, start).normalize();
+    const ringColor = 0xD4A843;          // songket gold
+    const ringEmissive = 0xD4A843;       // self-illuminating so it pops on dark tiles
+    const RING_TUBE_RADIUS = 0.04;       // thick enough to read from isometric view
+    const RING_RADIUS = 0.30;            // outer radius of the ring on the floor
+    // Tiles sit at y=0.05 (TILE_Y). Lift the rings just above the tile
+    // surface so they don't z-fight or get hidden under the tile cap.
+    const TILE_LIFT = 0.055;
+
+    // -- From ring (bottom) --
+    const fromCenter = start.clone();
+    fromCenter.y = TILE_LIFT;
+    const fromRing = this.makeFloorRing(ringColor, ringEmissive, RING_RADIUS, RING_TUBE_RADIUS);
+    fromRing.position.copy(fromCenter);
+    this.group.add(fromRing);
+
+    // -- To ring (top) --
+    const toCenter = end.clone();
+    toCenter.y = TILE_LIFT;
+    const toRing = this.makeFloorRing(ringColor, ringEmissive, RING_RADIUS, RING_TUBE_RADIUS);
+    toRing.position.copy(toCenter);
+    this.group.add(toRing);
+
+    // -- Guide line: from a point on the from ring, up the side of the
+    //    monument, to a point on the to ring. We use a thin tube along
+    //    a 3-point curve (start, mid-air next to the monument, end) so
+    //    the line visibly connects the two rings.
+    //
+    //    The mid point is offset perpendicular to the climb direction,
+    //    away from the monument, so the line passes by the side of the
+    //    monument rather than through it.
+    const perp = new THREE.Vector3(-facing.z, 0, facing.x).normalize();
+    const midAir = start.clone().lerp(end, 0.5);
+    midAir.addScaledVector(perp, length * 0.18);
+    midAir.y = Math.max(start.y, end.y) + 0.15; // stay just above the highest ring
+
+    const guideMat = new THREE.MeshBasicMaterial({
+      color: ringColor,
+      transparent: true,
+      opacity: 0.85,
+      depthWrite: false
+    });
+    const guideCurve = new THREE.CatmullRomCurve3([
+      start.clone().addScaledVector(perp, -RING_RADIUS * 0.4).setY(TILE_LIFT + 0.02),
+      midAir.clone(),
+      end.clone().addScaledVector(perp, -RING_RADIUS * 0.4).setY(TILE_LIFT + 0.02)
+    ], false, 'catmullrom', 0.5);
+    const guideTube = new THREE.Mesh(
+      new THREE.TubeGeometry(guideCurve, 24, 0.025, 6, false),
+      guideMat
+    );
+    this.group.add(guideTube);
+
+    // -- Small arrow at the top ring pointing up (reinforces "up") --
+    const arrowMat = new THREE.MeshBasicMaterial({
+      color: ringColor,
+      transparent: true,
+      opacity: 0.95
+    });
+    const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.10, 0.20, 6), arrowMat);
+    // Place the arrow above the top ring, offset slightly toward the
+    // monument so it doesn't conflict with pions landing on the tile.
+    const arrowBase = end.clone().addScaledVector(facing, -0.18);
+    arrowBase.y = TILE_LIFT + 0.40;
+    arrow.position.copy(arrowBase);
+    this.group.add(arrow);
+  }
+
+  /**
+   * Make a thin glowing ring that sits flat on the floor. Returns a
+   * mesh you can position anywhere in 3D space.
+   */
+  private makeFloorRing(color: number, emissive: number, outerR: number, tubeR: number): THREE.Mesh {
+    const ringGeo = new THREE.TorusGeometry(outerR, tubeR, 8, 24);
+    const ringMat = new THREE.MeshStandardMaterial({
+      color,
+      emissive,
+      emissiveIntensity: 0.65,
+      roughness: 0.3,
+      metalness: 0.4
+    });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x = Math.PI / 2; // lay flat on the floor
+    ring.castShadow = false;        // no need to shadow the floor
+    return ring;
   }
 
   /** Expose the climb path so the Game can animate a pion climbing. */

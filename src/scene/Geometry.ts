@@ -131,6 +131,12 @@ export class BoardGeometry {
       }
       const l = getLadderAt(sq);
       if (l) {
+        // Ladder.ts now owns both the monument AND the from/to legibility
+        // cues (gold rings at the from and to tiles, a guide line, an
+        // up-arrow at the top). Previously this was a separate LadderGlow
+        // class, but that one was buried under the tiles (LIFT < TILE_Y)
+        // so players couldn't see the from→to relationship. The cues
+        // are now built in Ladder's constructor at the correct height.
         const ladder = new Ladder(l);
         this.group.add(ladder.group);
         this.ladders.push(ladder);

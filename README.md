@@ -75,10 +75,14 @@ npm run test:watch # vitest, watch mode
 - 9 distinct snake shapes (S-curve, spiral coil, zigzag, loop, arch, etc.)
 - 7 stylized 3D cultural monuments (Candi Borobudur, Candi Prambanan,
   Istana Maimun, Benteng Rotterdam, Monas, Candi Sewu, Taman Nasional Komodo)
+- **Ladder from/to cues**: glowing gold ring on the from and to squares of
+  every ladder, a thin gold guide line, and a small up-arrow at the top
+  — so you can read at a glance "this monument lifts you from square X
+  to square Y"
 - 5 procedural batik tile patterns (parang, ulos, kawung, poleng, ukir)
 - Stylized 2.5D Indonesia archipelago base under the tiles
 - Player costume picker (5 batik patterns, 2-3 color
-   variants per pattern) — bots keep their assigned costumes
+  variants per pattern) — bots keep their assigned costumes
 - Snake tubes route around the dice (keep-out zone with 2-stage geometry fix)
 - Dice lifted above snake arc peak with parabolic bounce physics
 - Camera modes: isometric, follow-pion, win-sweep orbital, **free-orbit**
@@ -195,8 +199,19 @@ removed.
 - **Slice 6**: Pion costume picker (5 batik patterns with color variants),
   procedural SFX (5 effects via Web Audio API, no audio files), trivia
   popup on ladder landings (18 questions, 7 monuments).
-- **Slice 7 (this slice)**: README, i18n (English/Indonesian), headless test
+- **Slice 7**: README, i18n (English/Indonesian), headless test
   harness (Vitest).
+- **Slice 8**: Free-orbit camera mode (drag to rotate, wheel/pinch
+  to zoom) with spherical-coord state machine.
+- **Slice 9 (this slice)**: Ladder from/to legibility cues. Each
+  ladder now has a glowing gold ring on the from square and on the to
+  square, a thin gold guide line that visibly traces the climb
+  direction, and a small up-arrow at the top — so players can read
+  "square X climbs to square Y" at a glance. Snakes already have a
+  clear head + eyes + tapered tail, so no extra cue was needed. The
+  previous `LadderGlow.ts` class (which had its cues buried under the
+  tile caps due to a `LIFT < TILE_Y` bug) was removed in favor of the
+  new Ladder-internal cues.
 
 ## Future work
 
